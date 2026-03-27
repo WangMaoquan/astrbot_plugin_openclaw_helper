@@ -20,11 +20,14 @@ class OpenClawHelper(Star):
         user_id = event.get_sender_id()
         group_id = event.get_group_id()
         
+        # Log for debugging
+        logger.info(f"[OpenClaw Helper] user_id={user_id}, group_id={group_id}")
+        logger.info(f"[OpenClaw Helper] req attributes: {dir(req)}")
+        
         # Set user parameter
         if group_id:
             req.user = f"group_{group_id}"
         else:
             req.user = str(user_id)
         
-        # Log for debugging
-        logger.info(f"[OpenClaw Helper] user_id={user_id}, group_id={group_id}, req.user={req.user}")
+        logger.info(f"[OpenClaw Helper] req.user set to: {req.user}")
