@@ -1,12 +1,16 @@
 {
-  "user_id_prefix": {
-    "description": "Prefix for user ID in session tracking. Group chats use 'group_' prefix by default.",
-    "type": "string",
-    "default": "group_",
-    "options": ["group_", "user_", ""]
+  "whitelist": {
+    "description": "List of user IDs allowed to execute dangerous commands",
+    "type": "list",
+    "default": []
+  },
+  "dangerous_keywords": {
+    "description": "Keywords that trigger dangerous operation warning",
+    "type": "list",
+    "default": ["删除", "rm ", "rm -rf", "exec", "sudo", "shutdown", "reboot", "kill"]
   },
   "enabled": {
-    "description": "Enable or disable the session helper",
+    "description": "Enable or disable the plugin",
     "type": "bool",
     "default": true
   }
