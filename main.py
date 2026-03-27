@@ -21,7 +21,21 @@ class OpenClawHelper(Star):
         self.whitelist = [uid.strip() for uid in whitelist_str.split(",") if uid.strip()]
         
         # 内置危险关键词（不展示给用户）
-        built_in_keywords = {"删除", "rm ", "rm -rf", "exec", "sudo", "shutdown", "reboot", "kill", "format", "del ", "drop "}
+        built_in_keywords = {
+            # 文件操作
+            "删除", "rm ", "rm -rf", "del ", "drop ", "unlink",
+            # 系统操作
+            "exec", "sudo", "shutdown", "reboot", "kill", "pkill",
+            # 敏感文件/目录
+            "/.ssh/", "/.aws/", "/.credentials/", "credentials",
+            "token", "api_key", "api-key", "password", "secret",
+            # 网络操作
+            "curl ", "wget ", "nc ", "netcat",
+            # 本地路径
+            "/Users/", "C:\\", "/home/", "/etc/",
+            # 其他危险操作
+            "format", "chmod 777", "chown "
+        }
         
         # 从配置读取用户添加的关键词
         keywords_str = config.get("dangerous_keywords", "")
