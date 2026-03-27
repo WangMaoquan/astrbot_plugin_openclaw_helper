@@ -3,7 +3,12 @@ from astrbot.api.star import Context, Star, register
 from astrbot.api.provider import ProviderRequest
 from astrbot.api import logger
 
-@register("astrbot_plugin_openclaw_helper", "OpenClaw Helper", "v1.0.0")
+@register(
+    "astrbot_plugin_openclaw_helper",
+    "OpenClaw Helper",
+    "OpenClaw session helper - maintains independent sessions per user/group",
+    "v0.0.1-beta"
+)
 class OpenClawHelper(Star):
     def __init__(self, context: Context):
         super().__init__(context)
