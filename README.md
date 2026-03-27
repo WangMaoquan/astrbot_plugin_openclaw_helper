@@ -1,44 +1,44 @@
 # OpenClaw Helper
 
-AstrBot plugin for maintaining session continuity with OpenClaw.
+AstrBot 插件，用于保持与 OpenClaw 的会话连续性。
 
-## Description
+## 简介
 
-This plugin hooks into LLM requests and adds user/group identifiers to maintain independent conversation sessions for each user or group.
+该插件通过拦截 LLM 请求，添加用户/群组标识符来维护独立的对话会话。
 
-## Features
+## 功能
 
-- Automatically adds user ID to LLM requests for private chats
-- Automatically adds group ID to LLM requests for group chats
-- Maintains separate conversation history per user/group
+- 私聊时自动将用户 QQ 号添加到 LLM 请求
+- 群聊时自动将群号添加到 LLM 请求
+- 为每个用户/群聊维护独立的对话历史
 
-## How It Works
+## 工作原理
 
-When AstrBot sends a request to OpenClaw's Chat API, this plugin intercepts the request and adds a `user` parameter:
+当 AstrBot 向 OpenClaw 的 Chat API 发送请求时，本插件会拦截请求并添加 `user` 参数：
 
-- Private chat: `user: "<qq_number>"`
-- Group chat: `user: "group_<group_number>"`
+- 私聊：`user: "<QQ号>"`
+- 群聊：`user: "group_<群号>"`
 
-This allows OpenClaw to maintain separate conversation sessions for each user and group.
+这样 OpenClaw 就可以为每个用户和群聊维护独立的对话会话。
 
-## Installation
+## 安装
 
-1. Copy this plugin folder to your AstrBot plugins directory
-2. Restart AstrBot
-3. Enable the plugin in AstrBot admin panel
+1. 将插件文件夹复制到 AstrBot 插件目录
+2. 重启 AstrBot
+3. 在 AstrBot 管理面板中启用插件
 
-## Configuration
+## 配置
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| user_id_prefix | Prefix for user ID | `group_` |
-| enabled | Enable/disable plugin | `true` |
+| 选项 | 说明 | 默认值 |
+|------|------|--------|
+| user_id_prefix | 用户 ID 前缀 | `group_` |
+| enabled | 启用/禁用插件 | `true` |
 
-## Requirements
+## 依赖
 
 - AstrBot >= 4.16
-- OpenClaw with Chat Completions API enabled
+- 已启用 Chat Completions API 的 OpenClaw
 
-## Author
+## 作者
 
 wangmaoquan
