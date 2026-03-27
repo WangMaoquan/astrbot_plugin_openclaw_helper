@@ -95,6 +95,11 @@ class OpenClawHelper(Star):
         """Hook into LLM requests to check whitelist for dangerous commands."""
         user_id = str(event.get_sender_id())
         
+        # 打印收到的 prompt 内容
+        logger.info(f"[OpenClaw Helper] ===== Prompt 内容 =====")
+        logger.info(f"[OpenClaw Helper] prompt: {req.prompt[:500] if req.prompt else 'None'}")
+        logger.info(f"[OpenClaw Helper] system_prompt: {req.system_prompt[:500] if req.system_prompt else 'None'}")
+        
         # 只有管理员能通过，其他人一概拦截，不调用 LLM
         if not self.is_admin(user_id):
             logger.info(f"[OpenClaw Helper] 非管理员用户危险操作被拦截 - 用户: {user_id}")
