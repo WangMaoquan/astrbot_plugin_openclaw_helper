@@ -91,7 +91,7 @@ class OpenClawHelper(Star):
             yield event.plain_result("用法: /whitelist add|remove|list [user_id]")
     
     @filter.on_llm_request()
-    async def on_llm_request(self, event: AstrMessageEvent, req: ProviderRequest):
+    async def on_llm_request_handler(self, event: AstrMessageEvent, req: ProviderRequest):
         """Hook into LLM requests to check whitelist for dangerous commands."""
         user_id = str(event.get_sender_id())
         
