@@ -23,12 +23,16 @@ class OpenClawHelper(Star):
         # Log for debugging
         logger.info(f"[OpenClaw Helper] user_id={user_id}, group_id={group_id}")
         
-        # Set user parameter first
+        # Set user and session_id parameter first
         if group_id:
-            req.user = f"group_{group_id}"
+            session_key = f"group_{group_id}"
         else:
-            req.user = str(user_id)
+            session_key = str(user_id)
+        
+        req.user = session_key
+        req.session_id = session_key
         
         # Log after setting
         logger.info(f"[OpenClaw Helper] req.user set to: {req.user}")
+        logger.info(f"[OpenClaw Helper] req.session_id set to: {req.session_id}")
         logger.info(f"[OpenClaw Helper] req attributes after: {dir(req)}")
