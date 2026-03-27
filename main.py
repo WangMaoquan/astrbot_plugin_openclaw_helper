@@ -96,7 +96,7 @@ class OpenClawHelper(Star):
         user_id = str(event.get_sender_id())
         
         # 打印收到的 prompt
-        logger.info(f"[OpenClaw Helper] prompt: {req.prompt[:200] if req.prompt else 'None'}")
+        logger.info(f"[OpenClaw Helper] contexts: {req.contexts}")
         
         # 只有管理员能通过，其他人一概拦截，不调用 LLM
         if not self.is_admin(user_id):
