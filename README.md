@@ -1,25 +1,33 @@
 # OpenClaw Helper
 
-AstrBot 插件，用于保持与 OpenClaw 的会话连续性。
+AstrBot 插件，提供危险操作白名单保护功能。
 
 ## 简介
 
-该插件通过拦截 LLM 请求，添加用户/群组标识符来维护独立的对话会话。
+该插件用于保护 AstrBot + OpenClaw 组合的 安全，检测危险操作并支持白名单机制。
 
 ## 功能
 
-- 私聊时自动将用户 QQ 号添加到 LLM 请求
-- 群聊时自动将群号添加到 LLM 请求
-- 为每个用户/群聊维护独立的对话历史
+- 危险操作检测：检测消息中的危险关键词
+- 白名单管理：通过命令添加/移除白名单用户
+- 日志记录：记录危险操作检测日志
 
 ## 工作原理
 
-当 AstrBot 向 OpenClaw 的 Chat API 发送请求时，本插件会拦截请求并添加 `user` 参数：
+当 AstrBot 向 OpenClaw 发送 LLM 请求时，插件会检测消息内容是否包含危险关键词：
 
-- 私聊：`user: "<QQ号>"`
-- 群聊：`user: "group_<群号>"`
+- 危险关键词：删除、rm、exec、sudo、shutdown 等
+- 白名单用户不受限制
+- 非白名单用户的危险操作会被记录
 
-这样 OpenClaw 就可以为每个用户和群聊维护独立的对话会话。
+## 指令
+
+| 指令 | 说明 |
+|------|------|
+| `/whitelist` | 查看当前白名单 |
+| `/whitelist add <user_id>` | 添加用户到白名单 |
+| `/whitelist remove <user_id>` | 从白名单移除用户 |
+| `/whitelist list` | 查看白名单列表 |
 
 ## 安装
 
@@ -31,13 +39,11 @@ AstrBot 插件，用于保持与 OpenClaw 的会话连续性。
 
 | 选项 | 说明 | 默认值 |
 |------|------|--------|
-| user_id_prefix | 用户 ID 前缀 | `group_` |
 | enabled | 启用/禁用插件 | `true` |
 
 ## 依赖
 
 - AstrBot >= 4.16
-- 已启用 Chat Completions API 的 OpenClaw
 
 ## 作者
 
