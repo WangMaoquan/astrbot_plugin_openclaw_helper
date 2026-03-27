@@ -1,0 +1,12 @@
+name: astrbot_plugin_openclaw_helper
+desc: OpenClaw session helper for AstrBot
+help: OpenClaw Helper - Helps maintain session continuity with OpenClaw
+version: v1.0.0
+author: wangmaoquan
+repo: https://github.com/wangmaoquan/astrbot_plugin_openclaw_helper
+
+display_name: OpenClaw Helper
+support_platforms:
+  - aiocqhttp
+  - telegram
+astrbot_version: ">=4.16,<5"

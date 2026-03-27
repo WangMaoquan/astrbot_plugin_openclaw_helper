@@ -1,0 +1,2 @@
+# AstrBot plugin dependencies (if any)
+# No external dependencies required for this plugin

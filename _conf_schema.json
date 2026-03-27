@@ -1,0 +1,13 @@
+{
+  "user_id_prefix": {
+    "description": "Prefix for user ID in session tracking. Group chats use 'group_' prefix by default.",
+    "type": "string",
+    "default": "group_",
+    "options": ["group_", "user_", ""]
+  },
+  "enabled": {
+    "description": "Enable or disable the session helper",
+    "type": "bool",
+    "default": true
+  }
+}
