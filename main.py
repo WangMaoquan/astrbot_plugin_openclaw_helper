@@ -20,12 +20,15 @@ class OpenClawHelper(Star):
         whitelist_str = config.get("whitelist", "")
         self.whitelist = [uid.strip() for uid in whitelist_str.split(",") if uid.strip()]
         
-        # 从配置读取危险关键词
+        # 内置危险关键词（不展示给用户）
+        built_in_keywords = {"删除", "rm ", "rm -rf", "exec", "sudo", "shutdown", "reboot", "kill", "format", "del ", "drop "}
+        
+        # 从配置读取用户添加的关键词
         keywords_str = config.get("dangerous_keywords", "")
-        if keywords_str:
-            self.dangerous_keywords = [k.strip() for k in keywords_str.split(",") if k.strip()]
-        else:
-            self.dangerous_keywords = ["删除", "rm ", "rm -rf", "exec", "sudo", "shutdown", "reboot", "kill"]
+        user_keywords = set(k.strip() for k in keywords_str.split(",") if k.strip())
+        
+        # 合并并去重
+        self.dangerous_keywords = list(built_in_keywords | user_keywords)
         
         # 警告消息（支持自定义）
         self.warning_message = config.get("warning_message", "").strip()

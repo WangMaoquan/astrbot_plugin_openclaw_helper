@@ -5,9 +5,9 @@
     "default": ""
   },
   "dangerous_keywords": {
-    "description": "危险关键词列表，用逗号分隔",
+    "description": "额外添加的危险关键词，用逗号分隔（内置关键词不会显示）",
     "type": "string",
-    "default": "删除, rm , rm -rf, exec, sudo, shutdown, reboot, kill"
+    "default": ""
   },
   "warning_message": {
     "description": "拦截时的警告消息，留空则使用默认消息",
