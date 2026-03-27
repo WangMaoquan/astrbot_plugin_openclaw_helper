@@ -1,4 +1,9 @@
 {
+  "admin_ids": {
+    "description": "管理员ID列表，用逗号分隔（可执行 whitelist add/remove）",
+    "type": "string",
+    "default": ""
+  },
   "whitelist": {
     "description": "白名单用户ID列表，用逗号分隔",
     "type": "string",
@@ -13,10 +18,5 @@
     "description": "拦截时的警告消息，留空则使用默认消息",
     "type": "string",
     "default": ""
-  },
-  "enabled": {
-    "description": "启用或禁用插件",
-    "type": "bool",
-    "default": true
   }
 }
