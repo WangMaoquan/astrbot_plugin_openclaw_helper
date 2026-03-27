@@ -20,19 +20,18 @@ class OpenClawHelper(Star):
         whitelist_str = config.get("whitelist", "")
         self.whitelist = [uid.strip() for uid in whitelist_str.split(",") if uid.strip()]
         
-        # 内置危险关键词（不展示给用户）
+        # 内置危险关键词（不展示给用户）- 只保留最明确的危险操作
         built_in_keywords = {
-            # 文件操作
+            # 文件删除
             "删除", "rm ", "rm -rf", "del ", "drop ", "unlink",
             # 系统操作
             "exec", "sudo", "shutdown", "reboot", "kill", "pkill",
-            # 敏感文件/目录
-            "/.ssh/", "/.aws/", "/.credentials/", "credentials",
-            "token", "api_key", "api-key", "password", "secret",
-            # 网络操作
-            "curl ", "wget ", "nc ", "netcat",
-            # 本地路径
-            "/Users/", "C:\\", "/home/", "/etc/",
+            # 明确获取敏感信息
+            "获取密码", "获取token", "读取密码", "查看密码",
+            "读取credentials", "获取credentials", "读取token",
+            "给我密码", "给我token", "show me password",
+            # 网络下载执行
+            "curl ", "wget ", "curl -", "wget -",
             # 其他危险操作
             "format", "chmod 777", "chown "
         }
