@@ -20,9 +20,8 @@ class OpenClawHelper(Star):
         admin_str = config.get("admin_ids", "")
         self.admin_ids = [uid.strip() for uid in admin_str.split(",") if uid.strip()]
         
-        # 从配置读取白名单
-        whitelist_str = config.get("whitelist", "")
-        self.whitelist = [uid.strip() for uid in whitelist_str.split(",") if uid.strip()]
+        # 白名单通过 /whitelist add 命令添加，不从配置读取
+        self.whitelist = []
         
         # 内置危险关键词（不展示给用户）- 只保留最明确的危险操作
         built_in_keywords = {
@@ -96,15 +95,11 @@ class OpenClawHelper(Star):
         """Hook into LLM requests to check whitelist for dangerous commands."""
         user_id = str(event.get_sender_id())
         
-        # 如果没有配置管理员，则直接拦截所有请求
-        if not self.admin_ids:
-            logger.info(f"[OpenClaw Helper] 未配置管理员，拦截危险操作 - 用户: {user_id}")
+        # 只有管理员能通过，其他人一概拦截
+        if not self.is_admin(user_id):
+            logger.info(f"[OpenClaw Helper] 非管理员用户危险操作被拦截 - 用户: {user_id}")
             req.prompt = self.warning_message
             req.system_prompt = (req.system_prompt or "") + "\n\n[系统] 用户刚才尝试执行危险操作，已被拦截并替换为警告消息。"
-            return
-        
-        # 检查是否在白名单
-        if user_id in self.whitelist:
             return
         
         # 检查危险关键词
