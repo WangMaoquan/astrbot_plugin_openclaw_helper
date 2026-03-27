@@ -74,16 +74,6 @@ class OpenClawHelper(Star):
         action = args[0]
         
         if action == "add" and len(args) > 1:
-        """白名单管理命令"""
-        args = event.message_str.strip().split()
-        
-        if not args:
-            yield event.plain_result(f"当前白名单: {self.whitelist}")
-            return
-        
-        action = args[0]
-        
-        if action == "add" and len(args) > 1:
             user_id = args[1]
             if user_id not in self.whitelist:
                 self.whitelist.append(user_id)
