@@ -11,7 +11,7 @@ import re
     "astrbot_plugin_openclaw_helper",
     "OpenClaw Helper",
     "OpenClaw session helper - whitelist protection for dangerous commands",
-    "v0.0.2-beta"
+    "v0.0.3-beta"
 )
 class OpenClawHelper(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
