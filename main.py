@@ -1,9 +1,11 @@
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star, register
 from astrbot.api.provider import ProviderRequest
+from astrbot.api import AstrBotConfig
 from astrbot.api import logger
 from astrbot.api.message_components import Plain
 import json
+import re
 
 @register(
     "astrbot_plugin_openclaw_helper",
@@ -12,16 +14,24 @@ import json
     "v0.0.1-beta"
 )
 class OpenClawHelper(Star):
-    def __init__(self, context: Context):
+    def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
-        # 白名单用户ID列表
-        self.whitelist = []
-        # 危险关键词列表
-        self.dangerous_keywords = [
-            "删除", "删除文件", "rm ", "rm -rf", 
-            "format", "执行命令", "exec", "sudo",
-            "shutdown", "reboot", "kill"
-        ]
+        # 从配置读取白名单
+        whitelist_str = config.get("whitelist", "")
+        self.whitelist = [uid.strip() for uid in whitelist_str.split(",") if uid.strip()]
+        
+        # 从配置读取危险关键词
+        keywords_str = config.get("dangerous_keywords", "")
+        if keywords_str:
+            self.dangerous_keywords = [k.strip() for k in keywords_str.split(",") if k.strip()]
+        else:
+            self.dangerous_keywords = ["删除", "rm ", "rm -rf", "exec", "sudo", "shutdown", "reboot", "kill"]
+        
+        # 警告消息（支持自定义）
+        self.warning_message = config.get("warning_message", "").strip()
+        if not self.warning_message:
+            # 默认糖浆风格警告
+            self.warning_message = "抱歉呀～这个操作有点危险，我不能执行呢 😣 如果真的需要，请联系管理员开通权限哦～"
     
     @filter.command(" whitelist")
     async def whitelist_cmd(self, event: AstrMessageEvent):
@@ -29,7 +39,6 @@ class OpenClawHelper(Star):
         args = event.message_str.strip().split()
         
         if not args:
-            # 显示白名单
             yield event.plain_result(f"当前白名单: {self.whitelist}")
             return
         
@@ -56,11 +65,29 @@ class OpenClawHelper(Star):
     @filter.on_llm_request()
     async def on_llm_request(self, event: AstrMessageEvent, req: ProviderRequest):
         """Hook into LLM requests to check whitelist for dangerous commands."""
-        user_id = event.get_sender_id()
+        user_id = str(event.get_sender_id())
+        
+        # 检查是否在白名单
+        if user_id in self.whitelist:
+            return
+        
+        # 检查危险关键词
         message_text = req.prompt or ""
         
-        is_dangerous = any(keyword in message_text for keyword in self.dangerous_keywords)
+        # 使用更精确的匹配
+        is_dangerous = False
+        matched_keyword = ""
+        for keyword in self.dangerous_keywords:
+            # 精确匹配整个词或前后有空格
+            pattern = r'(^|\s)' + re.escape(keyword) + r'(\s|$)'
+            if re.search(pattern, message_text):
+                is_dangerous = True
+                matched_keyword = keyword
+                break
         
-        if is_dangerous and str(user_id) not in self.whitelist:
-            logger.info(f"[OpenClaw Helper] 危险操作检测 - 用户: {user_id}, 内容: {message_text[:50]}")
-            # 注意：这里是检测危险操作，可以选择警告或拦截
+        if is_dangerous:
+            logger.info(f"[OpenClaw Helper] 危险操作被拦截 - 用户: {user_id}, 关键词: {matched_keyword}")
+            # 拦截：清空请求，替换为警告消息
+            req.prompt = self.warning_message
+            # 可选：添加上下文说明被拦截了
+            req.system_prompt = (req.system_prompt or "") + "\n\n[系统] 用户刚才尝试执行危险操作，已被拦截并替换为警告消息。"
