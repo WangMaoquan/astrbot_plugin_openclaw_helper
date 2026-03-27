@@ -103,7 +103,6 @@ class OpenClawHelper(Star):
         # 只有管理员能通过，其他人一概拦截，不调用 LLM
         if not self.is_admin(user_id):
             logger.info(f"[OpenClaw Helper] 非管理员用户危险操作被拦截 - 用户: {user_id}")
-            yield event.plain_result(self.warning_message)
             event.stop_event()
             return
         
