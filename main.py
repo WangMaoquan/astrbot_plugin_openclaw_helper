@@ -16,6 +16,10 @@ import re
 class OpenClawHelper(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
+        # 从配置读取管理员ID
+        admin_str = config.get("admin_ids", "")
+        self.admin_ids = [uid.strip() for uid in admin_str.split(",") if uid.strip()]
+        
         # 从配置读取白名单
         whitelist_str = config.get("whitelist", "")
         self.whitelist = [uid.strip() for uid in whitelist_str.split(",") if uid.strip()]
@@ -49,8 +53,27 @@ class OpenClawHelper(Star):
             # 默认糖浆风格警告
             self.warning_message = "抱歉呀～这个操作有点危险，我不能执行呢 😣 如果真的需要，请联系管理员开通权限哦～"
     
+    def is_admin(self, user_id: str) -> bool:
+        """检查是否为管理员"""
+        return user_id in self.admin_ids
+    
     @filter.command(" whitelist")
     async def whitelist_cmd(self, event: AstrMessageEvent):
+        user_id = str(event.get_sender_id())
+        args = event.message_str.strip().split()
+        
+        # 需要管理员权限才能执行任何操作
+        if not self.is_admin(user_id):
+            yield event.plain_result("抱歉，你没有权限执行此操作哦 😣")
+            return
+        
+        if not args:
+            yield event.plain_result(f"当前白名单: {self.whitelist}")
+            return
+        
+        action = args[0]
+        
+        if action == "add" and len(args) > 1:
         """白名单管理命令"""
         args = event.message_str.strip().split()
         
@@ -82,6 +105,13 @@ class OpenClawHelper(Star):
     async def on_llm_request(self, event: AstrMessageEvent, req: ProviderRequest):
         """Hook into LLM requests to check whitelist for dangerous commands."""
         user_id = str(event.get_sender_id())
+        
+        # 如果没有配置管理员，则直接拦截所有请求
+        if not self.admin_ids:
+            logger.info(f"[OpenClaw Helper] 未配置管理员，拦截危险操作 - 用户: {user_id}")
+            req.prompt = self.warning_message
+            req.system_prompt = (req.system_prompt or "") + "\n\n[系统] 用户刚才尝试执行危险操作，已被拦截并替换为警告消息。"
+            return
         
         # 检查是否在白名单
         if user_id in self.whitelist:
